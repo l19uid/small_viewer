@@ -1,0 +1,30 @@
+<div>
+    <a class="btn btn-primary" href="insert.php">Založit pracovníka</a>
+</div>
+<table class="table table-striped mt-3">
+    <tr>
+        <th>Název</th>
+        <th>Práce</th>
+        <th>Wage</th>
+        <th colspan="2">Akce</th>
+    </tr>
+    {{#employees}}
+        <tr>
+            <td><a href="detail.php?employee_id={{employee_id}}">{{name}} {{surname}}</a></td>
+            <td>{{job}}</td>
+            <td>{{phone}}</td>
+            <td>
+                <form method="get" action="update.php">
+                    <input type="submit" value="Upravit" class="btn btn-info">
+                    <input type="hidden" name="employee_id" value="{{employee_id}}">
+                </form>
+            </td>
+            <td>
+                <form method="post" action="delete.php">
+                    <input type="submit" value="Smazat" class="btn btn-danger" onclick="return confirm('Opravdu chcete smazat pracovníka?')">
+                    <input type="hidden" name="employee_id" value="{{employee_id}}">
+                </form>
+            </td>
+        </tr>
+    {{/employees}}
+</table>

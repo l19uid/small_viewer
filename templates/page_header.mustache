@@ -1,0 +1,27 @@
+<h1>Prohlížeč databáze</h1>
+<nav>
+    <ul>
+        <li><a href="/room/list.php">Místnosti</a></li>
+        <li><a href="/employee/list.php">Lidé</a></li>
+    </ul>
+    <div class="flex-container">
+
+        {{^isLogged}}
+            <!-- change password button -->
+            <form action="/changePassword.php" method="post">
+                <input type="submit" value="Změnit heslo" class="btn btn-warning">
+            </form>
+
+            <!-- logout button -->
+            <form action="/logout.php" method="post">
+                <input type="submit" value="Odhlásit se" class="btn btn-info" onclick="return confirm('Opravdu se chcete odhlásit?')">
+            </form>
+        {{/isLogged}}
+        {{#isLogged}}
+            <!-- login button -->
+            <form action="/login.php" method="post">
+                <input type="submit" value="Přihlásit se" class="btn btn-info">
+            </form>
+        {{/isLogged}}
+    </div>
+</nav>

@@ -1,0 +1,20 @@
+<h2>
+    Přihlášení
+</h2>
+<form method="post" action="/login.php">
+
+    {{#loginError}}<div class="d-block invalid-feedback">{{loginError}}</div>{{/loginError}}
+    <!-- login -->
+    <div class="form-group">
+        <label for="login">Login</label>
+        <input type="text" class="form-control" id="login" name="login">
+    </div>
+    <!-- password -->
+    <div class="form-group">
+        <label for="password">Heslo</label>
+        <input type="password" class="form-control" id="password" name="password">
+    </div>
+
+    <!--tlacitko-->
+    <button type="submit" class="btn btn-info mt-3">Přihlásit se</button>
+</form>

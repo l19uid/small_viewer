@@ -1,0 +1,20 @@
+<h1>Detail pracovníka {{employee.employee_id}}</h1>
+<dl>
+    {{#employee}}
+    <dt>Jméno</dt>
+    <dd>{{name}} {{surname}}</dd>
+
+    <dt>Práce</dt>
+    <dd>{{job}}</dd>
+
+    <dt>Plat</dt>
+    <dd>{{wage}}</dd>
+
+    {{/employee}}
+    <dt>Klíče</dt>
+    {{#keys}}
+        <dd>
+            <a href='../../room/detail.php/?room_id={{room}}'>{{room_name}}</a>
+        </dd>
+    {{/keys}}
+</dl>

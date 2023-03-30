@@ -1,0 +1,7 @@
+{
+  "db" : {
+    "user": "root",
+    "pass" : ""
+  },
+  "debug" : true
+}
