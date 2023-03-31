@@ -4,6 +4,7 @@ require_once "../bootstrap/bootstrap.php";
 $username = "";
 $password = "";
 $loginSuccess = false;
+$hash = "";
 
 readPost();
 $loginSuccess = login();
@@ -19,19 +20,22 @@ if ($loginSuccess) {
 
 function readPost(): void
 {
-    global $username, $password;
+    global $username, $hash;
 
     $username = filter_input(INPUT_POST, 'login', FILTER_DEFAULT);
     $password = filter_input(INPUT_POST, 'password', FILTER_DEFAULT);
+    $hash = hash('sha256', $password);
 }
 
 function login(): bool
 {
-    global $username, $password;
+    global $username, $hash;
+
 
     $employees = Employee::all();
     foreach ($employees as $employee) {
-        if ($employee->username === $username && $employee->password === $password) {
+        if ($employee->username === $username && ($employee->password === $hash))
+        {
             $_SESSION['employee'] = $employee;
             return true;
         }
