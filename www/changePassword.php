@@ -10,7 +10,8 @@ class ChangePasswordPage extends CRUDPage
     protected string $newPassword;
     protected string $newPasswordConfirm;
 
-    protected string $hash;
+    protected string $newHash;
+    protected string $oldHash;
 
     protected Employee $employee;
 
@@ -62,12 +63,13 @@ class ChangePasswordPage extends CRUDPage
         $this->newPassword = filter_input(INPUT_POST, 'new_password', FILTER_DEFAULT) ?? "";
         $this->newPasswordConfirm = filter_input(INPUT_POST, 'new_password_again', FILTER_DEFAULT) ?? "";
 
-        $this->hash = hash('sha256', filter_input(INPUT_POST, 'new_password', FILTER_DEFAULT) ?? "");
+        $this->oldHash = hash('sha256', filter_input(INPUT_POST, 'old_password', FILTER_DEFAULT) ?? "");
+        $this->newHash = hash('sha256', filter_input(INPUT_POST, 'new_password', FILTER_DEFAULT) ?? "");
     }
 
     function validateInput(): bool
     {
-        if ($this->oldPassword !==  $_SESSION["employee"]->password)
+        if ($this->oldHash !==  $_SESSION["employee"]->password)
             $this->errors["old_password"] = "Staré heslo není správné";
 
         if ($this->oldPassword === $this->newPassword)
@@ -82,7 +84,7 @@ class ChangePasswordPage extends CRUDPage
     function changePassword(): bool
     {
         $employee = $_SESSION["employee"];
-        $employee->password = $this->hash;
+        $employee->password = $this->newHash;
         return $employee->update();
     }
 }

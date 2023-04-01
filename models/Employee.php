@@ -108,6 +108,18 @@ class Employee
         return $employee;
     }
 
+    private static function findRoomByEmployeeID(?int $employee_id)
+    {
+        $pdo = PDOProvider::get();
+        $query = "SELECT `room` FROM `" . self::$table . "` WHERE `employee_id` = $employee_id";
+        $stmt = $pdo->query($query);
+
+        if ($stmt->rowCount() < 1)
+            return null;
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['room'];
+    }
+
     public function validate(array &$errors = []) : bool
     {
         if (is_string($this->name))
@@ -130,6 +142,7 @@ class Employee
 
     public function insert() : bool
     {
+        $hashedPassword = hash('sha256', $this->password);
         $query = "INSERT INTO `".self::$table."` (`name`, `surname`, `job`, `wage`, `room`, `username`, `password`) VALUES (:name, :surname, :job, :wage, :room, :username, :password);";
         $pdo = PDOProvider::get();
 
@@ -141,7 +154,7 @@ class Employee
             'wage' => $this->wage,
             'room' => $this->room,
             'username' => $this->username,
-            'password' => $this->password
+            'password' => $hashedPassword
         ]);
 
     }
@@ -150,6 +163,8 @@ class Employee
     {
         $query = "UPDATE `".self::$table."` SET `name` = :name,`surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room, `username` = :username, `password` = :password WHERE `employee_id`=:employee_id;";
         $pdo = PDOProvider::get();
+
+        $this->room = Employee::findRoomByEmployeeID($this->employee_id);
 
         $stmt = $pdo->prepare($query);
         return $stmt->execute([

@@ -6,7 +6,7 @@
     </ul>
     <div class="flex-container">
 
-        {{^isLogged}}
+        {{#isLogged}}
             <!-- change password button -->
             <form action="/changePassword.php" method="post">
                 <input type="submit" value="Změnit heslo" class="btn btn-warning">
@@ -17,7 +17,7 @@
                 <input type="submit" value="Odhlásit se" class="btn btn-info" onclick="return confirm('Opravdu se chcete odhlásit?')">
             </form>
         {{/isLogged}}
-        {{#isLogged}}
+        {{^isLogged}}
             <!-- login button -->
             <form action="/login.php" method="post">
                 <input type="submit" value="Přihlásit se" class="btn btn-info">

@@ -1,5 +1,6 @@
 <?php
 require_once "../bootstrap/bootstrap.php";
+session_start();
 
 $username = "";
 $password = "";
@@ -30,7 +31,6 @@ function readPost(): void
 function login(): bool
 {
     global $username, $hash;
-
 
     $employees = Employee::all();
     foreach ($employees as $employee) {

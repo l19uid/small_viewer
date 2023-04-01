@@ -5,6 +5,7 @@ abstract class Page
 {
     public string $title;
 
+
     protected function prepareData() : void {
 
     }
@@ -18,7 +19,9 @@ abstract class Page
     }
 
     protected function pageHeader() : string {
-        return MustacheProvider::get()->render("page_header", []);
+
+        $isLogged = $_SESSION["employee"] ?? null;
+        return MustacheProvider::get()->render("page_header", ["isLogged" => $isLogged]);
     }
 
     protected abstract function pageBody() : string;
@@ -31,13 +34,9 @@ abstract class Page
             $this->HTTPHeaders();
 
             $pageData = [];
-            //získá hlavičky
+
             $pageData["htmlHead"] = $this->HTMLHead();
 
-            //získá záhlaví
-            $pageData["pageHeader"] = $this->pageHeader();
-
-            //získá tělo stránky
             if (isset($_SESSION["employee"]))
             {
                 $pageData["pageHeader"] = $this->pageHeader();
