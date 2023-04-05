@@ -1,7 +1,7 @@
 <?php
 require_once "../../bootstrap/bootstrap.php";
 
-class RoomListPage extends CRUDPage
+class RoomListPage extends AuthenticatedPage
 {
     public string $title = "Seznam místností";
 
@@ -13,7 +13,7 @@ class RoomListPage extends CRUDPage
         //získám data o místnostech
         $rooms = Room::all();
 
-        $html .= MustacheProvider::get()->render("room_list", ["rooms" => $rooms]);
+        $html .= MustacheProvider::get()->render("room_list", ["rooms" => $rooms, "isadmin" => $_SESSION['employee']->admin]);
         //vyrenderuju
 
         return $html;
@@ -30,7 +30,7 @@ class RoomListPage extends CRUDPage
 
         switch ($action)
         {
-            case self::ACTION_INSERT:
+            case CRUDPage::ACTION_INSERT:
                 if ($success === 1)
                 {
                     $data['message'] = 'Mistnost byla založena';
@@ -43,7 +43,7 @@ class RoomListPage extends CRUDPage
                 }
                 break;
 
-            case self::ACTION_DELETE:
+            case CRUDPage::ACTION_DELETE:
                 if ($success === 1)
                 {
                     $data['message'] = 'Mistnost byla smazána';

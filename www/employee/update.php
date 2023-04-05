@@ -24,6 +24,11 @@ class EmployeeInsertPage extends CRUDPage
                     throw new BadRequestException();
 
                 $this->roomKeys = Room::all();
+                $keys = array_map(function($item) { return $item['room']; }, Key::findByEmployeeId($employee_id));
+                foreach ($this->roomKeys as $roomKey)
+                {
+                    $roomKey->checked = in_array($roomKey->room_id, $keys);
+                }
                 $this->rooms = Room::all();
                 $this->employee = Employee::findByID($employee_id);
                 if (!$this->employee)
@@ -35,12 +40,35 @@ class EmployeeInsertPage extends CRUDPage
             case self::STATE_DATA_SENT:
                 //načíst data
                 $this->employee = Employee::readPost();
+                $roomKeys = filter_input(INPUT_POST, 'keys', FILTER_VALIDATE_INT, FILTER_REQUIRE_ARRAY);
+                foreach ($roomKeys as $k) {
+                    if (!Room::findByID($k))
+                        throw new BadRequestException();
+                }
+
                 //zkontrolovat data
                 $this->errors = [];
                 if ($this->employee->validate($this->errors))
                 {
                     //zpracovat
+                    if($this->employee->password != "")
+                        $this->employee->password = hash("sha256",$this->employee->password);
                     $result = $this->employee->update();
+
+                    foreach(Key::all() as $key) {
+                        if ($key->employee != $this->employee->employee_id)
+                            continue;
+
+                        $key->delete();
+                    }
+
+                    foreach($roomKeys as $roomKey) {
+                        $key = new Key();
+                        $key->employee = $this->employee->employee_id;
+                        $key->room = $roomKey;
+                        $key->insert();
+                    }
+
                     //přesměrovat
                     $this->redirect(self::ACTION_UPDATE, $result);
                 }
@@ -56,13 +84,24 @@ class EmployeeInsertPage extends CRUDPage
 
     protected function pageBody(): string
     {
-        return MustacheProvider::get()->render("employee_form",
-            [
-                'employee' => $this->employee,
-                'errors' => $this->errors,
-                'keys' => $this->roomKeys,
-                'rooms' => $this->rooms
-            ]);
+        if($_SESSION["employee"]->admin || $_SESSION["employee"]->id == $this->employee->employee_id)
+        {
+            return MustacheProvider::get()->render("employee_form",
+                [
+                    'employee' => $this->employee,
+                    'errors' => $this->errors,
+                    'keys' => $this->roomKeys,
+                    'rooms' => $this->rooms,
+                    'admin' => $_SESSION["employee"]->admin
+                ]);
+        }
+        else
+        {
+            $data['message'] = 'NEDOSTATEČNÁ PRÁVA';
+            $data['alertType'] = 'danger';
+            return MustacheProvider::get()->render("alert", $data);
+        }
+
         //vyrenderuju
     }
 
@@ -73,17 +112,6 @@ class EmployeeInsertPage extends CRUDPage
 
         return self::STATE_FORM_REQUEST;
     }
-
-    protected function getKeys($id) : array
-    {
-        $keys = Key::findByEmployeeId($id);
-        $keys = array_map(function ($key) {
-            $key['room_name'] = Key::getRoomNameById($key['room']);
-            return $key;
-        }, $keys);
-        return $keys;
-    }
-
 }
 
 $page = new EmployeeInsertPage();

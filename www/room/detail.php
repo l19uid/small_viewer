@@ -37,8 +37,7 @@ class RoomDetailPage extends Page
 
     protected function pageBody(): string
     {
-        //ukážu místnost
-        return MustacheProvider::get()->render("room_detail", ["room" => $this->room, 'employees' => $this->employees]);
+            return MustacheProvider::get()->render("room_detail", ["room" => $this->room, 'employees' => $this->employees]);
     }
 }
 

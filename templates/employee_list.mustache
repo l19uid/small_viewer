@@ -1,18 +1,23 @@
 <div>
+    {{#isadmin}}
     <a class="btn btn-primary" href="insert.php">Založit pracovníka</a>
+    {{/isadmin}}
 </div>
 <table class="table table-striped mt-3">
     <tr>
         <th>Název</th>
         <th>Práce</th>
         <th>Wage</th>
+    {{#isadmin}}
         <th colspan="2">Akce</th>
+    {{/isadmin}}
     </tr>
     {{#employees}}
         <tr>
             <td><a href="detail.php?employee_id={{employee_id}}">{{name}} {{surname}}</a></td>
             <td>{{job}}</td>
-            <td>{{phone}}</td>
+            <td>{{wage}}</td>
+            {{#isadmin}}
             <td>
                 <form method="get" action="update.php">
                     <input type="submit" value="Upravit" class="btn btn-info">
@@ -25,6 +30,7 @@
                     <input type="hidden" name="employee_id" value="{{employee_id}}">
                 </form>
             </td>
+            {{/isadmin}}
         </tr>
     {{/employees}}
 </table>

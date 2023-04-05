@@ -1,6 +1,6 @@
 <?php
 
-abstract class CRUDPage extends Page
+abstract class CRUDPage extends AdminPage
 {
     const STATE_FORM_REQUEST = 0;
     const STATE_DATA_SENT = 1;

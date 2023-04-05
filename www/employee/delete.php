@@ -11,7 +11,7 @@ class EmployeeDeletePage extends CRUDPage
         if (!$employee_id)
             throw new BadRequestException();
 
-        $result = Room::deleteById($employee_id);
+        $result = Employee::deleteById($employee_id);
         $this->redirect(self::ACTION_DELETE, $result);
     }
 

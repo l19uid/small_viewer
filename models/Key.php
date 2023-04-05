@@ -62,13 +62,13 @@ class Key
     private function hydrate(array $rawData): void
     {
         if (array_key_exists('key_id', $rawData)) {
-            $this->room_id = $rawData['key_id'];
+            $this->key_id = $rawData['key_id'];
         }
         if (array_key_exists('room', $rawData)) {
-            $this->name = $rawData['room'];
+            $this->room = $rawData['room'];
         }
         if (array_key_exists('employee', $rawData)) {
-            $this->phone = $rawData['employee'];
+            $this->employee = $rawData['employee'];
         }
     }
 
@@ -103,4 +103,34 @@ class Key
 
         return $key;
     }
+
+    public function insert() : bool
+    {
+        $query = "INSERT INTO `".self::$table."` (`employee`, `room`) VALUES (:employee, :room);";
+        $pdo = PDOProvider::get();
+
+        $stmt = $pdo->prepare($query);
+        return $stmt->execute([
+            'employee' => $this->employee,
+            'room' => $this->room
+        ]);
+    }
+
+    public static function deleteById(int $key_id) : bool
+    {
+        $query = "DELETE FROM `".self::$table."` WHERE `key_id` = :key_id";
+
+        $pdo = PDOProvider::get();
+
+        $stmt = $pdo->prepare($query);
+        return $stmt->execute([
+            'key_id' => $key_id,
+        ]);
+    }
+
+    public function delete() : bool
+    {
+        return static::deleteById($this->key_id);
+    }
+
 }

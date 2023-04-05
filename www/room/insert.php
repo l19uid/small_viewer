@@ -43,7 +43,15 @@ class RoomInsertPage extends CRUDPage
 
     protected function pageBody(): string
     {
-        return MustacheProvider::get()->render("room_form",
+        //ukážu místnost
+        if(!$_SESSION["employee"]->admin)
+        {
+            $data['message'] = 'NEDOSTATEČNÁ PRÁVA';
+            $data['alertType'] = 'danger';
+            return MustacheProvider::get()->render("alert", $data);
+        }
+        else
+            return MustacheProvider::get()->render("room_form",
             [
                 'room' => $this->room,
                 'errors' => $this->errors

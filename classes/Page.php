@@ -5,7 +5,6 @@ abstract class Page
 {
     public string $title;
 
-
     protected function prepareData() : void {
 
     }
@@ -24,7 +23,9 @@ abstract class Page
         return MustacheProvider::get()->render("page_header", ["isLogged" => $isLogged]);
     }
 
-    protected abstract function pageBody() : string;
+    protected function pageBody() : string{
+        return "";
+    }
 
     public function render() : void {
         try {

@@ -32,14 +32,12 @@ function login(): bool
 {
     global $username, $hash;
 
-    $employees = Employee::all();
-    foreach ($employees as $employee) {
-        if ($employee->username === $username && ($employee->password === $hash))
-        {
-            $_SESSION['employee'] = $employee;
-            return true;
-        }
-    }
+    $employee = Employee::findLoginHash($username, $hash);
 
-    return false;
+    if (!$employee)
+        return false;
+
+    $_SESSION['employee'] = $employee;
+
+    return true;
 }

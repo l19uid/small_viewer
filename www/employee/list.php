@@ -1,7 +1,7 @@
 <?php
 require_once "../../bootstrap/bootstrap.php";
 
-class EmployeeListPage extends CRUDPage
+class EmployeeListPage extends AuthenticatedPage
 {
     public string $title = "Seznam místností";
 
@@ -12,7 +12,7 @@ class EmployeeListPage extends CRUDPage
         //získám data o místnostech
         $employees = Employee::all();
 
-        $html .= MustacheProvider::get()->render("employee_list", ["employees" => $employees]);
+        $html .= MustacheProvider::get()->render("employee_list", ["employees" => $employees,"isadmin" => $_SESSION['employee']->admin]);
 
         //vyrenderuju
 
@@ -30,7 +30,7 @@ class EmployeeListPage extends CRUDPage
 
         switch ($action)
         {
-            case self::ACTION_INSERT:
+            case CRUDPage::ACTION_INSERT:
                 if ($success === 1)
                 {
                     $data['message'] = 'Pacovník byl založen';
@@ -43,7 +43,7 @@ class EmployeeListPage extends CRUDPage
                 }
                 break;
 
-            case self::ACTION_DELETE:
+            case CRUDPage::ACTION_DELETE:
                 if ($success === 1)
                 {
                     $data['message'] = 'Pracovníi byl smazán';

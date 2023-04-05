@@ -27,6 +27,7 @@
         <input type="text" class="form-control" id="wage" name="wage" value="{{employee.wage}}">
         {{#errors.name}}<div class="d-block invalid-feedback">{{errors.name}}</div>{{/errors.name}}
     </div>
+    {{^employee.employee_id}}
     <div class="form-group">
         <label for="username">Uživatelské jméno</label>
         <input type="text" class="form-control" id="username" name="username" value="{{employee.username}}">
@@ -34,11 +35,30 @@
     </div>
     <div class="form-group">
         <label for="password">Heslo</label>
-        <input type="password" class="form-control" id="password" name="password" value="{{employee.password}}">
+        <input type="password" class="form-control" id="password" name="password" value="">
+        {{#errors.password}}<div class="d-block invalid-feedback">{{errors.password}}</div>{{/errors.password}}
+    </div>
+    {{/employee.employee_id}}
+    {{#admin}}
+    <div class="form-group">
+        <label for="username">Uživatelské jméno</label>
+        <input type="text" class="form-control" id="username" name="username" value="{{employee.username}}">
         {{#errors.name}}<div class="d-block invalid-feedback">{{errors.name}}</div>{{/errors.name}}
     </div>
     <div class="form-group">
-        <label for="room">Místnost</label>
+        <label for="password">Heslo</label>
+        <input type="password" class="form-control" id="password" name="password" value="">
+        {{#errors.password}}<div class="d-block invalid-feedback">{{errors.password}}</div>{{/errors.password}}
+    </div>
+        <div class="form-group">
+            <label for="admin"><br>Admin</label>
+            <input type="checkbox" class="checkbox" id="{{admin}}" name="admin" id="admin" value="{{admin}}">
+            {{#errors.admin}}<div class="d-block invalid-feedback">{{errors.admin}}</div>{{/errors.admin}}
+        </div>
+    {{/admin}}
+
+    <div class="form-group">
+        <label for="room"><br>Místnost</label>
         <select id="room_id" name="room">
             {{#rooms}}
             <option value="{{room_id}}">{{name}}</option>
@@ -49,7 +69,7 @@
     <div class="form-group">
         <label for="key">Klíče</label>
         {{#keys}}<br>
-        <input type="checkbox" class="checkbox" id="{{room_id}}" name="keys" id="keys" value="{{selected}}">{{name}}
+        <input type="checkbox" class="checkbox" id="{{room_id}}" name="keys[]" id="keys" value="{{room_id}}" {{#checked}}checked{{/checked}}>{{name}}
         {{#errors.name}}<div class="d-block invalid-feedback">{{errors.name}}</div>{{/errors.name}}
         {{/keys}}
     </div>

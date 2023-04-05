@@ -51,6 +51,32 @@ class Employee
         return new Employee($stmt->fetch(PDO::FETCH_ASSOC));
     }
 
+    public static function findLogin(string $username, string $password) : Employee|null
+    {
+        $pdo = PDOProvider::get();
+        $query = "SELECT * FROM `" . self::$table . "` WHERE `username` = :username AND `password` = :password";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(['username' => $username, 'password' => hash('sha256', $password)]);
+
+        if ($stmt->rowCount() < 1)
+            return null;
+
+        return new Employee($stmt->fetch(PDO::FETCH_ASSOC));
+    }
+
+    public static function findLoginHash(string $username, string $hash) : Employee|null
+    {
+        $pdo = PDOProvider::get();
+        $query = "SELECT * FROM `" . self::$table . "` WHERE `username` = :username AND `password` = :password";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(['username' => $username, 'password' => $hash]);
+
+        if ($stmt->rowCount() < 1)
+            return null;
+
+        return new Employee($stmt->fetch(PDO::FETCH_ASSOC));
+    }
+
     /**
      * @param array $rawData
      * @return void
@@ -78,6 +104,9 @@ class Employee
         if (array_key_exists('username', $rawData)) {
             $this->username = $rawData['username'];
         }
+        if (array_key_exists('admin', $rawData)) {
+            $this->admin = $rawData['admin'];
+        }
     }
 
     private static function sortSQL(array $sort) : string
@@ -104,6 +133,7 @@ class Employee
         $employee->room = filter_input(INPUT_POST, 'room', FILTER_VALIDATE_INT);
         $employee->password = filter_input(INPUT_POST, 'password', FILTER_DEFAULT);
         $employee->username = filter_input(INPUT_POST, 'username', FILTER_DEFAULT);
+        $employee->admin = filter_input(INPUT_POST, 'admin', FILTER_VALIDATE_BOOL);
 
         return $employee;
     }
@@ -143,7 +173,7 @@ class Employee
     public function insert() : bool
     {
         $hashedPassword = hash('sha256', $this->password);
-        $query = "INSERT INTO `".self::$table."` (`name`, `surname`, `job`, `wage`, `room`, `username`, `password`) VALUES (:name, :surname, :job, :wage, :room, :username, :password);";
+        $query = "INSERT INTO `".self::$table."` (`name`, `surname`, `job`, `wage`, `room`, `username`, `password`,`admin`) VALUES (:name, :surname, :job, :wage, :room, :username, :password, :admin);";
         $pdo = PDOProvider::get();
 
         $stmt = $pdo->prepare($query);
@@ -154,14 +184,20 @@ class Employee
             'wage' => $this->wage,
             'room' => $this->room,
             'username' => $this->username,
-            'password' => $hashedPassword
+            'password' => $hashedPassword,
+            'admin' => $this->admin
         ]);
 
     }
 
     public function update() : bool
     {
-        $query = "UPDATE `".self::$table."` SET `name` = :name,`surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room, `username` = :username, `password` = :password WHERE `employee_id`=:employee_id;";
+        if($this->password == null)
+            $hashedPassword = Employee::findLoginHash($this->username, $this->password)->password;
+        else
+            $hashedPassword = $this->password;
+
+        $query = "UPDATE `".self::$table."` SET `name` = :name,`surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room,`admin` = :admin, `username` = :username, `password` = :password WHERE `employee_id`=:employee_id;";
         $pdo = PDOProvider::get();
 
         $this->room = Employee::findRoomByEmployeeID($this->employee_id);
@@ -175,12 +211,11 @@ class Employee
             'wage' => $this->wage,
             'room' => $this->room,
             'username' => $this->username,
-            'password' => $this->password
+            'password' => $hashedPassword,
+            'admin' => $this->admin
         ]);
 
     }
-
-
 
     public static function deleteById(int $employee_id) : bool
     {
