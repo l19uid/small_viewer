@@ -51,8 +51,6 @@ class EmployeeInsertPage extends CRUDPage
                 if ($this->employee->validate($this->errors))
                 {
                     //zpracovat
-                    if($this->employee->password != "")
-                        $this->employee->password = hash("sha256",$this->employee->password);
                     $result = $this->employee->update();
 
                     foreach(Key::all() as $key) {
@@ -92,7 +90,7 @@ class EmployeeInsertPage extends CRUDPage
                     'errors' => $this->errors,
                     'keys' => $this->roomKeys,
                     'rooms' => $this->rooms,
-                    'admin' => $_SESSION["employee"]->admin
+                    'admin' => true
                 ]);
         }
         else

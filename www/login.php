@@ -32,6 +32,9 @@ function login(): bool
 {
     global $username, $hash;
 
+    if(!$username || !$hash)
+        return false;
+
     $employee = Employee::findLoginHash($username, $hash);
 
     if (!$employee)

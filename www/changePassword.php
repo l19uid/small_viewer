@@ -1,8 +1,24 @@
 <?php
 require_once "../bootstrap/bootstrap.php";
 
-class ChangePasswordPage extends CRUDPage
+class ChangePasswordPage extends Page
 {
+    const STATE_FORM_REQUEST = 0;
+    const STATE_DATA_SENT = 1;
+
+    const ACTION_INSERT = 1;
+    const ACTION_UPDATE = 2;
+    const ACTION_DELETE = 3;
+
+    protected function redirect(int $action, bool $success) : void
+    {
+        header("Location: list.php?".http_build_query([
+                'success' => $success ? 1 : 0,
+                'action' => $action
+            ]));
+        exit;
+    }
+
     public string $title = "Změnit heslo";
     protected int $state;
 
@@ -64,7 +80,6 @@ class ChangePasswordPage extends CRUDPage
         $this->newPasswordConfirm = filter_input(INPUT_POST, 'new_password_again', FILTER_DEFAULT) ?? "";
 
         $this->oldHash = hash('sha256', filter_input(INPUT_POST, 'old_password', FILTER_DEFAULT) ?? "");
-        $this->newHash = hash('sha256', filter_input(INPUT_POST, 'new_password', FILTER_DEFAULT) ?? "");
     }
 
     function validateInput(): bool
@@ -84,7 +99,8 @@ class ChangePasswordPage extends CRUDPage
     function changePassword(): bool
     {
         $employee = $_SESSION["employee"];
-        $employee->password = $this->newHash;
+        bdump(hash('sha256',$this->newPassword));
+        $employee->password = hash('sha256',$this->newPassword);
         return $employee->update();
     }
 }

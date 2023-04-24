@@ -172,7 +172,9 @@ class Employee
 
     public function insert() : bool
     {
-        $hashedPassword = hash('sha256', $this->password);
+        if(!$this->validate())
+            return false;
+
         $query = "INSERT INTO `".self::$table."` (`name`, `surname`, `job`, `wage`, `room`, `username`, `password`,`admin`) VALUES (:name, :surname, :job, :wage, :room, :username, :password, :admin);";
         $pdo = PDOProvider::get();
 
@@ -184,7 +186,7 @@ class Employee
             'wage' => $this->wage,
             'room' => $this->room,
             'username' => $this->username,
-            'password' => $hashedPassword,
+            'password' => $this->password,
             'admin' => $this->admin
         ]);
 
@@ -192,12 +194,12 @@ class Employee
 
     public function update() : bool
     {
-        if($this->password == null)
-            $hashedPassword = Employee::findLoginHash($this->username, $this->password)->password;
-        else
-            $hashedPassword = $this->password;
+        if($this->password != null || is_string($this->password))
+        {
+            $this->updatePassword($this->employee_id, $this->password);
+        }
 
-        $query = "UPDATE `".self::$table."` SET `name` = :name,`surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room,`admin` = :admin, `username` = :username, `password` = :password WHERE `employee_id`=:employee_id;";
+        $query = "UPDATE `".self::$table."` SET `name` = :name,`surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room, `username` = :username,`admin` = :admin WHERE `employee_id`=:employee_id;";
         $pdo = PDOProvider::get();
 
         $this->room = Employee::findRoomByEmployeeID($this->employee_id);
@@ -211,10 +213,20 @@ class Employee
             'wage' => $this->wage,
             'room' => $this->room,
             'username' => $this->username,
-            'password' => $hashedPassword,
             'admin' => $this->admin
         ]);
+    }
 
+    public static function updatePassword(int $employee_id, string $password) : bool
+    {
+        $query = "UPDATE `".self::$table."` SET `password` = :password WHERE `employee_id`=:employee_id;";
+        $pdo = PDOProvider::get();
+
+        $stmt = $pdo->prepare($query);
+        return $stmt->execute([
+            'employee_id' => $employee_id,
+            'password' => $password
+        ]);
     }
 
     public static function deleteById(int $employee_id) : bool
