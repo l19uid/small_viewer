@@ -11,11 +11,19 @@ class EmployeeListPage extends AuthenticatedPage
 
         //získám data o místnostech
         $employees = Employee::all();
+        $rooms = Room::all();
+
+        for($i = 0; $i < count($employees); $i++) {
+            foreach($rooms as $room) {
+                if($employees[$i]->room == $room->room_id) {
+                    $employees[$i]->roomName = $room->name;
+                }
+            }
+        }
 
         $html .= MustacheProvider::get()->render("employee_list", ["employees" => $employees,"isadmin" => $_SESSION['employee']->admin]);
 
         //vyrenderuju
-
         return $html;
     }
 

@@ -95,6 +95,9 @@ class Employee
         if (array_key_exists('job', $rawData)) {
             $this->job = $rawData['job'];
         }
+        if (array_key_exists('room', $rawData)) {
+            $this->room = $rawData['room'];
+        }
         if (array_key_exists('wage', $rawData)) {
             $this->wage = $rawData['wage'];
         }
@@ -202,8 +205,6 @@ class Employee
         $query = "UPDATE `".self::$table."` SET `name` = :name,`surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room, `username` = :username,`admin` = :admin WHERE `employee_id`=:employee_id;";
         $pdo = PDOProvider::get();
 
-        $this->room = Employee::findRoomByEmployeeID($this->employee_id);
-
         $stmt = $pdo->prepare($query);
         return $stmt->execute([
             'employee_id' => $this->employee_id,
@@ -229,6 +230,23 @@ class Employee
         ]);
     }
 
+    public static function findByRoom(int $room_id) : array
+    {
+        $pdo = PDOProvider::get();
+        $query = "SELECT * FROM `" . self::$table . "` WHERE `room` = $room_id";
+        $stmt = $pdo->query($query);
+
+        if ($stmt->rowCount() < 1)
+            return [];
+
+        $result = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $result[] = new Employee($row);
+        }
+
+        return $result;
+    }
+
     public static function deleteById(int $employee_id) : bool
     {
         $query = "DELETE FROM `".self::$table."` WHERE `employee_id` = :employee_id";
@@ -238,6 +256,18 @@ class Employee
         $stmt = $pdo->prepare($query);
         return $stmt->execute([
             'employee_id' => $employee_id,
+        ]);
+    }
+
+    public static function changeRoomByRoomID(int $room_id) : bool
+    {
+        $query = "UPDATE `".self::$table."` SET `room` = :new_room_id WHERE `room`=:room_id;";
+        $pdo = PDOProvider::get();
+
+        $stmt = $pdo->prepare($query);
+        return $stmt->execute([
+            'room_id' => $room_id,
+            'new_room_id' => 0
         ]);
     }
 

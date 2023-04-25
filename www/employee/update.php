@@ -82,7 +82,7 @@ class EmployeeInsertPage extends CRUDPage
 
     protected function pageBody(): string
     {
-        if($_SESSION["employee"]->admin || $_SESSION["employee"]->id == $this->employee->employee_id)
+        if($_SESSION["employee"]->admin)
         {
             return MustacheProvider::get()->render("employee_form",
                 [

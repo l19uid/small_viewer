@@ -99,7 +99,6 @@ class ChangePasswordPage extends Page
     function changePassword(): bool
     {
         $employee = $_SESSION["employee"];
-        bdump(hash('sha256',$this->newPassword));
         $employee->password = hash('sha256',$this->newPassword);
         return $employee->update();
     }

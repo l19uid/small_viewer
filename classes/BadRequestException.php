@@ -6,5 +6,4 @@ class BadRequestException extends BaseException
     {
         parent::__construct($message, $code, $previous);
     }
-
 }

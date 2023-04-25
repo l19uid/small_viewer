@@ -140,15 +140,17 @@ class Room
 
     }
 
-    public static function deleteById(int $roomId) : bool
+    public static function deleteById(int $room_id) : bool
     {
-        $query = "DELETE FROM `".self::$table."` WHERE `room_id` = :roomId";
+        Key::deleteByToomId($room_id);
+
+        $query = "DELETE FROM `".self::$table."` WHERE `room_id` = :room_id";
 
         $pdo = PDOProvider::get();
 
         $stmt = $pdo->prepare($query);
         return $stmt->execute([
-            'roomId' => $roomId,
+            'room_id' => $room_id,
         ]);
     }
 

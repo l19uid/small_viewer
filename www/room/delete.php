@@ -11,6 +11,9 @@ class RoomDeletePage extends CRUDPage
         if (!$roomId)
             throw new BadRequestException();
 
+        if(count(Employee::findByRoom($roomId)) > 0)
+            throw new OcupiedException();
+
         $result = Room::deleteById($roomId);
         $this->redirect(self::ACTION_DELETE, $result);
     }

@@ -8,15 +8,17 @@
         <th>Název</th>
         <th>Práce</th>
         <th>Wage</th>
+        <th>Místnost</th>
     {{#isadmin}}
         <th colspan="2">Akce</th>
     {{/isadmin}}
     </tr>
     {{#employees}}
-        <tr>
+        <a>
             <td><a href="detail.php?employee_id={{employee_id}}">{{name}} {{surname}}</a></td>
             <td>{{job}}</td>
             <td>{{wage}}</td>
+            <td><a href="../../room/detail.php?room_id={{room}}">{{roomName}}</a></td>
             {{#isadmin}}
             <td>
                 <form method="get" action="update.php">

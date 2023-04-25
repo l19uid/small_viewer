@@ -128,6 +128,18 @@ class Key
         ]);
     }
 
+    public static function deleteByToomId(int $room_id) : bool
+    {
+        $query = "DELETE FROM `".self::$table."` WHERE `room` = :room_id";
+
+        $pdo = PDOProvider::get();
+
+        $stmt = $pdo->prepare($query);
+        return $stmt->execute([
+            'room_id' => $room_id,
+        ]);
+    }
+
     public function delete() : bool
     {
         return static::deleteById($this->key_id);
