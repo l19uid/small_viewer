@@ -50,9 +50,6 @@ class EmployeeInsertPage extends CRUDPage
                 $this->errors = [];
                 if ($this->employee->validate($this->errors))
                 {
-                    //zpracovat
-                    $result = $this->employee->update();
-
                     foreach(Key::all() as $key) {
                         if ($key->employee != $this->employee->employee_id)
                             continue;
@@ -60,12 +57,16 @@ class EmployeeInsertPage extends CRUDPage
                         $key->delete();
                     }
 
+                    $result = $this->employee->update();
+
                     foreach($roomKeys as $roomKey) {
                         $key = new Key();
                         $key->employee = $this->employee->employee_id;
                         $key->room = $roomKey;
                         $key->insert();
                     }
+
+                    //zpracovat
 
                     //přesměrovat
                     $this->redirect(self::ACTION_UPDATE, $result);

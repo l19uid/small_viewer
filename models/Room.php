@@ -107,6 +107,18 @@ class Room
             $this->phone = trim($this->phone);
         if (!$this->phone)
             $this->phone = NULL;
+        foreach(Room::all() as $room)
+        {
+            if($room->no == $this->no && $room->room_id != $this->room_id)
+                $errors['no'] = "Číslo již existuje";
+        }
+
+
+        if($this->no < 0)
+            $errors['no'] = "Číslo musí být kladné";
+
+        if(!is_numeric($this->no))
+            $errors['no'] = "Číslo musí číslo";
 
         return count($errors) === 0;
     }

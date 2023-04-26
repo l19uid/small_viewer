@@ -202,6 +202,8 @@ class Employee
             $this->updatePassword($this->employee_id, $this->password);
         }
 
+        bdump($this->room);
+
         $query = "UPDATE `".self::$table."` SET `name` = :name,`surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room, `username` = :username,`admin` = :admin WHERE `employee_id`=:employee_id;";
         $pdo = PDOProvider::get();
 
